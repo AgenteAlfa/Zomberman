@@ -28,6 +28,7 @@ public class Nodo extends Conexion {
                 new Socket(
                         Configuracion.SERVER_IP,
                         Configuracion.PUERTO_JUEGO));
+        System.out.println(".....Ejecutando codigo NODO");
         System.out.println("Cree mis socket");
         getOOSConexion().writeObject(Configuracion.MI_IP);
         System.out.println("Envie ip");
@@ -38,7 +39,7 @@ public class Nodo extends Conexion {
 
 
         Data = 0;
-
+        System.out.println(".....TERMINANDO ejecutar codigo NODO");
     }
     protected void Empezar()
     {

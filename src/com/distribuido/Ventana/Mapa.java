@@ -83,6 +83,7 @@ public class Mapa implements Serializable {
 
     public Mapa Inclur_Jugadores(int cantidad)
     {
+        System.out.println("SE INCLUYEN " + cantidad + " jugadores");
         Random R = new Random();
         for (int i = 0; i < cantidad; i++) {
             int tx = R.nextInt(X) , ty = R.nextInt(Y);
@@ -101,6 +102,7 @@ public class Mapa implements Serializable {
     }
     public Mapa Inclur_Zombies(int cantidad)
     {
+        System.out.println("SE INCLUYEN " + cantidad + " zombies");
         Random R = new Random();
         for (int i = 0; i < cantidad; i++) {
             int tx = R.nextInt(X) , ty = R.nextInt(Y);

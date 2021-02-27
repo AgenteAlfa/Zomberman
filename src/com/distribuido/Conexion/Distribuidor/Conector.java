@@ -27,10 +27,10 @@ public class Conector extends Servidor {
         System.out.println("Esperando Zombies...");
         System.out.println("Presionar una tecla para continuar");
         SC.next();
+
         DejarEsperar();
         //El conector genera el mapa agrega a los jugadores
         CrearEnviarMapa();
-        System.out.println("Se envio el mapa");
         Iniciar();
 
 

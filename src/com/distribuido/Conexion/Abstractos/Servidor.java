@@ -52,12 +52,12 @@ public abstract class Servidor {
         for (int i = 0; i < Nodos.size(); i++) {
             try {
                 Nodos.get(i).getOOSJuego().writeObject(new Comunicaciones(Participantes,i,-1));
-                System.out.println("Se envio data");
+                System.out.println("Se envio comunicaciones");
             } catch (IOException e) {
                 e.printStackTrace();
             }
         }
-        System.out.println("Termine de enviar data");
+        System.out.println("Termine de enviar comunicaciones");
     }
     protected void Iniciar()
     {
@@ -87,19 +87,19 @@ public abstract class Servidor {
     {
         Mapa mMapa = new Mapa(10,10)
                 .Inclur_Jugadores(Jugadores)
-                .Inclur_Zombies(Jugadores - Nodos.size());
+                .Inclur_Zombies(Nodos.size() - Jugadores);
 
         //mMapa.Imprimir();
 
         for (int i = 0; i < Nodos.size(); i++) {
             try {
                 Nodos.get(i).getOOSJuego().writeObject(mMapa);
-                System.out.println("Se envio data");
+                System.out.println("Se envio mapa");
             } catch (IOException e) {
                 e.printStackTrace();
             }
         }
-
+        System.out.println("Termine de enviar el mapa");
     }
 
 

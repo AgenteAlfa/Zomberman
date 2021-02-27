@@ -1,10 +1,9 @@
 package com.distribuido.Ventana;
 
-import com.distribuido.Conexion.Nodo.Nodo;
 
 import java.io.IOException;
 
-public class ControladorZombie extends Nodo implements Controlador{
+public class ControladorZombie implements Controlador{
 
     private Mapa mMapa;
     private final int Foco;
