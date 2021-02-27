@@ -30,7 +30,7 @@ public class Ventana extends JFrame implements KeyListener, Controlador {
         mListener = listener;
         Foco = enfoque;
 
-        setSize(Constantes.ANCHO, Constantes.ALTO);
+        setSize(Constantes.ANCHO + 15, Constantes.ALTO+ 39);
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         setResizable(false);
         setLocationRelativeTo(null);
@@ -99,14 +99,15 @@ public class Ventana extends JFrame implements KeyListener, Controlador {
         return mMapa;
     }
 
-    private void Buscar()
+    private void BuscarAlrededor()
     {
         if (mMapa.Obj[PosicionFoco[0]] [PosicionFoco[1]] != Foco)
         {
-            if (mMapa.Obj[PosicionFoco[0] + 1] [PosicionFoco[1]] == Foco)   PosicionFoco[0] ++;
-            if (mMapa.Obj[PosicionFoco[0] - 1] [PosicionFoco[1]] == Foco)   PosicionFoco[0] --;
-            if (mMapa.Obj[PosicionFoco[0]] [PosicionFoco[1] + 1] == Foco)   PosicionFoco[1] ++;
-            if (mMapa.Obj[PosicionFoco[0]] [PosicionFoco[1] - 1] == Foco)   PosicionFoco[1] --;
+
+            try{ if (mMapa.Obj[PosicionFoco[0] + 1] [PosicionFoco[1]] == Foco)   PosicionFoco[0] ++; } catch (Exception ignored){}
+            try{ if (mMapa.Obj[PosicionFoco[0] - 1] [PosicionFoco[1]] == Foco)   PosicionFoco[0] --; } catch (Exception ignored){}
+            try{ if (mMapa.Obj[PosicionFoco[0]] [PosicionFoco[1] + 1] == Foco)   PosicionFoco[1] ++; } catch (Exception ignored){}
+            try{ if (mMapa.Obj[PosicionFoco[0]] [PosicionFoco[1] - 1] == Foco)   PosicionFoco[1] --; } catch (Exception ignored){}
         }
     }
 
@@ -114,7 +115,7 @@ public class Ventana extends JFrame implements KeyListener, Controlador {
     {
         int Dx = (Constantes.ANCHO)/(Constantes.VisionX);
         int Dy = (Constantes.ALTO)/(Constantes.VisionY);
-        Buscar();
+        BuscarAlrededor();
 
         int [][] TempMapMov = new int[Constantes.VisionX][Constantes.VisionY];
         int [][] TempMapObj = new int[Constantes.VisionX][Constantes.VisionY];
@@ -210,6 +211,8 @@ public class Ventana extends JFrame implements KeyListener, Controlador {
                             Graph.drawImage(DataImg.Bomba,i*Dx,j*Dy,Dx,Dy,null);
                         if (TempMapObj[i][j] > Sim_Obj.JUGADOR_5)
                             Graph.drawImage(DataImg.Zombie,i*Dx,j*Dy,Dx,Dy,null);
+                        if (TempMapObj[i][j] < Sim_Obj.EXPLOSION)
+                            Graph.drawImage(DataImg.Explosion,i*Dx,j*Dy,Dx,Dy,null);
                         break;
                 }
 
@@ -220,7 +223,139 @@ public class Ventana extends JFrame implements KeyListener, Controlador {
 
     @Override
     public void EjecutarOrdenes(char[] data) {
-        System.out.println("Hijole ejecuto ordenes");
+        //Se asume el 0 -> 1 , 1 -> 2 ....etc
+        //System.out.println("Estoy ejecutando ordenes de tam " + data.length);
+        for (int i = 0; i < data.length; i++) {
+            try {
+                if (data[i] != 0)
+                    System.out.println((i + 1) + "\t : \t" + data[i] );
+                Ejecutar(i + 1, data[i]);
+            }catch (Exception ignored){}
+        }
+
+        RevisarBombas();
+
+    }
+
+    private int[] Buscar(int t)
+    {
+
+        for (int i = 0; i < mMapa.X; i++) {
+            for (int j = 0; j < mMapa.Y; j++) {
+                if (mMapa.Obj[i][j] == t)
+                {
+                    return new int[] {i , j};
+                }
+            }
+        }
+        return null;
+    }
+
+    public void Ejecutar(int tag, char orden)
+    {
+        int[] posicion = Buscar(tag); if (posicion == null) return;
+        int[] objetivo = posicion.clone();
+        switch (orden)
+        {
+            case 'W':
+            case 'w':
+                objetivo[1] --;
+                break;
+            case 'S':
+            case 's':
+                objetivo[1] ++;
+                break;
+            case 'D':
+            case 'd':
+                objetivo[0] ++;
+                break;
+            case 'A':
+            case 'a':
+                objetivo[0] --;
+                break;
+            case 'B':
+            case 'b':
+                mMapa.Bombas[tag - 1] = true;
+                break;
+        }
+
+        if ( mMapa.Mov[objetivo[0]][objetivo[1]] == Sim_Mov.PASABLE  && mMapa.Obj[objetivo[0]][objetivo[1]] == Sim_Obj.VACIO )
+        {
+            //Mover Objeto
+            mMapa.Obj[posicion[0]][posicion[1]] = Sim_Obj.VACIO;
+            mMapa.Obj[objetivo[0]][objetivo[1]] = tag;
+
+
+            if (mMapa.Bombas[tag - 1])
+            {
+                mMapa.Obj[posicion[0]][posicion[1]] = Sim_Obj.BOMBA;
+                mMapa.Bombas[tag - 1] = false;
+            }
+        }
+    }
+
+    public void RevisarBombas()
+    {
+        for (int i = 0; i < mMapa.X; i++) {
+            for (int j = 0; j < mMapa.Y; j++) {
+                int c = mMapa.Obj[i][j];
+                if(c < 0)
+                {
+                    if (c > Sim_Obj.DISIPA_EXPLOSION)   //Si c es una bomba
+                        mMapa.Obj[i][j] = c - 1;
+                    else
+                    {
+                        mMapa.Obj[i][j] = Sim_Obj.VACIO;
+                    }
+                }
+
+            }
+        }
+
+        int[] PosExp;
+        while ( (PosExp = Buscar(Sim_Obj.EXPLOSION + 1)) != null )
+        {
+            ExplotarBomba(PosExp[0], PosExp[1] );
+        }
+
+    }
+
+    private void ExplotarBomba(int x ,  int y)
+    {
+
+        //EQ
+        try{ Explotar(x,y,true);           } catch (Exception ignored){}
+        //Der
+        try{ Explotar(x + 1,y,false);   } catch (Exception ignored){}
+        //Izq
+        try{ Explotar(x - 1,y,false);   } catch (Exception ignored){}
+        //Arr
+        try{ Explotar(x,y + 1,false);   } catch (Exception ignored){}
+        //Aba
+        try{ Explotar(x,y - 1,false);   } catch (Exception ignored){}
+    }
+
+    private void Explotar(int x ,  int y, boolean EQ)
+    {
+        if (mMapa.Mov[x][y] == Sim_Mov.PASABLE)
+        {
+
+            if (!EQ && mMapa.Obj[x][y] < 0 && mMapa.Obj[x][y] > Sim_Obj.EXPLOSION)
+                ExplotarBomba(x,y);
+            mMapa.Obj[x][y] = Sim_Obj.EXPLOSION;
+        }
+        else if (mMapa.Mov[x][y] == Sim_Mov.ARBOL)
+        {
+            mMapa.Mov[x][y] = Sim_Mov.PASABLE;
+            mMapa.Obj[x][y] = Sim_Obj.EXPLOSION;
+        }
+        else if (mMapa.Mov[x][y] == Sim_Mov.ROCA_BLANDA)
+        {
+            mMapa.Mov[x][y] = Sim_Mov.PASABLE;
+            mMapa.Obj[x][y] = Sim_Obj.EXPLOSION;
+        }
+        else if (mMapa.Mov[x][y] == Sim_Mov.ROCA_DURA)
+            mMapa.Mov[x][y] = Sim_Mov.ROCA_BLANDA;
     }
 
 
@@ -228,6 +363,7 @@ public class Ventana extends JFrame implements KeyListener, Controlador {
     {
         void Moverse(int tecla);
     }
+
 
 
     @Override

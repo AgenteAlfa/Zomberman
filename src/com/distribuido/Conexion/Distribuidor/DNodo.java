@@ -12,22 +12,11 @@ public class DNodo extends Conexion {
         super(Conexion, Juego);
     }
 
-    public char LeerOrden()
-    {
-        try {
-            return (char) getOISConexion().readObject();
-        } catch (IOException | ClassNotFoundException e) {
-            e.printStackTrace();
-        }
-        return ' ';
+    public char LeerOrden() throws IOException, ClassNotFoundException {
+        return (char) getOISConexion().readObject();
     }
-    public void EnviarEstado(char[] Data)
-    {
-        try {
-            getOOSJuego().writeObject(Data);
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
+    public void EnviarEstado(char[] Data) throws IOException {
+        getOOSJuego().writeObject(Data);
     }
 
 }

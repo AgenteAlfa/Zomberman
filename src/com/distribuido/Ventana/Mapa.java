@@ -6,6 +6,7 @@ import java.util.Random;
 public class Mapa implements Serializable {
     int[][] Mov , Obj;
     int X,Y;
+    boolean[] Bombas;
 
 
 
@@ -95,7 +96,7 @@ public class Mapa implements Serializable {
             }
 
         }
-
+        Bombas = new boolean[cantidad];
         return this;
     }
     public Mapa Inclur_Zombies(int cantidad)

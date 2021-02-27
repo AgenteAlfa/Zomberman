@@ -14,7 +14,9 @@ public class Sim_Obj {
     public static int ZOMBIE = 6; //Los nodos que controlen zombies manejaran el codigo 6 o mayor
 
     public static final int BOMBA = -1;
-    public static final int EXPLOSION = Configuracion.TIEMPO_BOMBA / Configuracion.DELTA;
+
+    public static final int EXPLOSION = - Configuracion.TIEMPO_BOMBA / Configuracion.DELTA;
+    public static final int DISIPA_EXPLOSION = EXPLOSION - Configuracion.DISIPACION / Configuracion.DELTA;
 
 
 }

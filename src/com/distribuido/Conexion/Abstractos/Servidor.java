@@ -93,11 +93,22 @@ public abstract class Servidor {
     }
 
 
-    protected void EnviarStatusTodos(char[] temp)
+    protected int EnviarStatusTodos(char[] temp)
     {
-        for (DNodo N:Nodos) {
-            N.EnviarEstado(temp);
+        int fuera = 0;
+        for (int i = 0; i < Nodos.size(); i++) {
+            DNodo N = Nodos.get(i);
+            if (N != null) {
+                try {
+                    N.EnviarEstado(temp);
+                } catch (Exception E) {
+                    Nodos.set(i,null);
+                    fuera++;
+                }
+
+            }
         }
+        return fuera;
     }
 
     private class HEsperador extends Hilo
@@ -120,14 +131,25 @@ public abstract class Servidor {
         protected void EjecucionBucle() {
             //Este hilo escucha las ordenes de cada nodo en cierto momento y las guarda para que
             //un hilo ejecutor pueda hacer las operaciones
+            int Fuera = 0;
             for (int i = 0; i < Nodos.size(); i++) {
                 DNodo N = Nodos.get(i);
-                char recibido = N.LeerOrden();
-                if (recibido != 0)
+                if (N != null)
                 {
-                    Data[i] = recibido ;
+                    try
+                    {
+                        char recibido = N.LeerOrden();
+                        if (recibido != 0)
+                        {
+                            Data[i] = recibido ;
+                        }
+                    }
+                    catch (Exception E) {
+                        Nodos.set(i,null);
+                        Fuera++;
+                        if (Fuera == Nodos.size()) Apagar();
+                    }
                 }
-
             }
         }
     }
@@ -138,14 +160,17 @@ public abstract class Servidor {
         @Override
         protected void EjecucionBucle() {
             //Instante T en el que se cuenta un turno
+
             char[] TesimaData = Data.clone();
+            Data = new char[Data.length];
             //Enviar data a todos los nodos para que actualizen su mapa
-            EnviarStatusTodos(TesimaData);
-            try {
-                sleep(150);
-            } catch (InterruptedException e) {
-                e.printStackTrace();
-            }
+
+            int fuera = EnviarStatusTodos(TesimaData);
+
+            if (fuera == Nodos.size())
+                Apagar();
+
+            try { sleep(Configuracion.DELTA); } catch (InterruptedException e) { e.printStackTrace();}
         }
     }
 
