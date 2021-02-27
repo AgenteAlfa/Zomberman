@@ -8,6 +8,7 @@ import java.awt.*;
 import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
 import java.awt.image.BufferStrategy;
+import java.util.Date;
 import java.util.Random;
 
 
@@ -25,6 +26,11 @@ public class Ventana extends JFrame implements KeyListener, Controlador {
 
     private DataSound mDS;
 
+    private Long Ini;
+    private int Seg = 0;
+    private int Fot = 0;
+    private int FPS = 0;
+
     public Ventana(Mapa mapa, int enfoque, AccionesJugador listener) throws HeadlessException {
         mMapa = mapa;
         mListener = listener;
@@ -37,6 +43,8 @@ public class Ventana extends JFrame implements KeyListener, Controlador {
         addKeyListener(this);
         setFocusable(true);
         setFocusTraversalKeysEnabled(false);
+
+        Ini = System.nanoTime();
 
         canvas = new Canvas();
         canvas.setPreferredSize(new Dimension(Constantes.ANCHO, Constantes.ALTO));
@@ -219,6 +227,13 @@ public class Ventana extends JFrame implements KeyListener, Controlador {
 
             }
         }
+        Graph.setColor(Color.WHITE);
+
+        Graph.drawString("FPS : " + FPS, 15,25);
+        FPS = (int) (1000000000 / (System.nanoTime() - Ini));
+        Ini = System.nanoTime();
+
+
     }
 
     @Override

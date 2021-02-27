@@ -20,7 +20,12 @@ public class Conector extends Servidor {
 
         Esperar();
         Scanner SC = new Scanner(System.in);
-        System.out.println("Presionar una tecla para empezar");
+        System.out.println("Esperando Jugadores...");
+        System.out.println("Presionar una tecla para continuar");
+        SC.next();
+        EsperarZombies();
+        System.out.println("Esperando Zombies...");
+        System.out.println("Presionar una tecla para continuar");
         SC.next();
         DejarEsperar();
         //El conector genera el mapa agrega a los jugadores

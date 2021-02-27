@@ -5,6 +5,7 @@ import com.distribuido.Conexion.Configuracion;
 import com.distribuido.Conexion.Distribuidor.DNodo;
 import com.distribuido.Conexion.Nodo.Nodo;
 import com.distribuido.Ventana.Mapa;
+import com.distribuido.Ventana.Sim_Obj;
 
 import java.io.IOException;
 import java.net.ServerSocket;
@@ -12,6 +13,7 @@ import java.util.ArrayList;
 
 public abstract class Servidor {
     private ArrayList<DNodo> Nodos;
+    private int Jugadores;
     private char[] Data;
     private ArrayList<String> Participantes;
 
@@ -34,10 +36,18 @@ public abstract class Servidor {
         Esperador = new HEsperador();
         Esperador.start();
     }
+    protected void EsperarZombies()
+    {
+        Jugadores = Nodos.size();
+        Sim_Obj.ZOMBIE = Jugadores + 1;
+        System.out.println("Hay " + Jugadores + " jugadores");
+    }
+
+
     protected void DejarEsperar()
     {
         Esperador.Apagar();
-        System.out.println("Se dejo de esperar : " + Nodos.size() + " nodos");
+        System.out.println("Hay " + (Nodos.size() - Jugadores) + " Zombies");
         Data = new char[Nodos.size()];
         for (int i = 0; i < Nodos.size(); i++) {
             try {
@@ -75,9 +85,9 @@ public abstract class Servidor {
     }
     protected void CrearEnviarMapa()
     {
-        Mapa mMapa = new Mapa(5,5)
-                .Inclur_Jugadores(Nodos.size())
-                .Inclur_Zombies(Nodos.size()*10);
+        Mapa mMapa = new Mapa(10,10)
+                .Inclur_Jugadores(Jugadores)
+                .Inclur_Zombies(Jugadores - Nodos.size());
 
         //mMapa.Imprimir();
 
@@ -106,7 +116,8 @@ public abstract class Servidor {
                     fuera++;
                 }
 
-            }
+            }else
+            fuera++;
         }
         return fuera;
     }
@@ -120,7 +131,7 @@ public abstract class Servidor {
                 System.out.println("A ingresado el jugador Nro " + Nodos.size() + "!");
                 Nodos.add(temp);
                 Participantes.add((String) temp.getOISConexion().readObject());
-                System.out.println("Se le comunico data al nodo " + Nodos.size());
+                System.out.println("Se le comunico data al nodo ");
             } catch (Exception ignored) {}
         }
     }
@@ -147,9 +158,14 @@ public abstract class Servidor {
                     catch (Exception E) {
                         Nodos.set(i,null);
                         Fuera++;
-                        if (Fuera == Nodos.size()) Apagar();
+                        if (Fuera == Nodos.size()){
+                            Apagar();
+                            System.out.println("Apagando 2...");
+                            Close();
+                        }
                     }
-                }
+                }else
+                    Fuera++;
             }
         }
     }
@@ -166,9 +182,11 @@ public abstract class Servidor {
             //Enviar data a todos los nodos para que actualizen su mapa
 
             int fuera = EnviarStatusTodos(TesimaData);
-
             if (fuera == Nodos.size())
+            {
                 Apagar();
+                System.out.println("Apagando 1...");
+            }
 
             try { sleep(Configuracion.DELTA); } catch (InterruptedException e) { e.printStackTrace();}
         }

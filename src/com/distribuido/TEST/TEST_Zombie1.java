@@ -1,15 +1,14 @@
 package com.distribuido.TEST;
 
-import com.distribuido.Conexion.Distribuidor.Conector;
-import com.distribuido.Conexion.Nodo.Jugador;
 import com.distribuido.Conexion.Nodo.Nodo;
+import com.distribuido.Conexion.Nodo.Zombie;
 
 import java.io.IOException;
 
-public class TEST_Jugador {
+public class TEST_Zombie1 {
     public static void main(String[] args) {
         try {
-            Jugador N = new Jugador();
+            Zombie Z = new Zombie();
         } catch (IOException | ClassNotFoundException e) {
             e.printStackTrace();
         }

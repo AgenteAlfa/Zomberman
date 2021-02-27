@@ -6,8 +6,13 @@ import java.io.IOException;
 
 public class ControladorZombie extends Nodo implements Controlador{
 
+    private Mapa mMapa;
+    private final int Foco;
+    private int[] PosicionFoco;
 
-    public ControladorZombie() throws IOException, ClassNotFoundException {
+    public ControladorZombie(Mapa mapa, int enfoque) throws IOException, ClassNotFoundException {
+        mMapa = mapa;
+        Foco = enfoque;
     }
 
     @Override
