@@ -3,9 +3,12 @@ package com.distribuido.Ventana.Data.Sonidos;
 import javax.sound.sampled.Clip;
 
 public class EfectosDeSonido {
-    public static Clip title, select, start, walk1, walk2, bomb,bomb2, explosion, powerup, dead, endgame;
+    public static Clip title, select, start, walk1, walk2, bomb,bomb2, explosion, powerup, dead,zdead,endgame;
 
     public static void init() {
+
+        zdead = Cargador.cargarSonido("src\\data\\soundeffects\\zdead.wav");
+
         title = Cargador.cargarSonido("src\\data\\soundeffects\\title.wav");
         select = Cargador.cargarSonido("src\\data\\soundeffects\\select.wav");
         start = Cargador.cargarSonido("src\\data\\soundeffects\\start.wav");

@@ -54,6 +54,8 @@ public class Ventana extends JFrame implements KeyListener, Controlador {
         add(canvas);
         setVisible(true);
         DataImg.Inicializar();
+        mDS = new DataSound();
+
         //Buscar la posicion
         for (int i = 0; i < mMapa.X; i++) {
             for (int j = 0; j < mMapa.Y; j++) {
@@ -65,6 +67,7 @@ public class Ventana extends JFrame implements KeyListener, Controlador {
         }
 
         Actualizar();
+        mDS.Inicio.reproducir();
     }
 
 
@@ -166,12 +169,13 @@ public class Ventana extends JFrame implements KeyListener, Controlador {
                         //Graph.drawImage(DataImg.Suelo,i*Dx,j*Dy,Dx,Dy,null);
                         break;
                     case Sim_Obj.EXPLOSION:
-                        //mDS.Explosion.reproducir();
+                        mDS.Explosion.reproducir();
                         Graph.drawImage(DataImg.Explosion,i*Dx,j*Dy,Dx,Dy,null);
                         break;
                     case Sim_Obj.BOMBA:
                         Graph.drawImage(DataImg.Bomba,i*Dx,j*Dy,Dx,Dy,null);
                         Random R = new Random();
+                        mDS.Bomba1.reproducir();
                         /*
                         if(R.nextInt(100) < 50)
                             mDS.Bomba1.reproducir();
@@ -214,16 +218,22 @@ public class Ventana extends JFrame implements KeyListener, Controlador {
                         }
                         else if (TempMapObj[i][j] == Sim_Obj.JUGADOR_BOOM)
                         {
+                            mDS.Dead.reproducir();
                             Graph.drawImage(DataImg.JBoom,i*Dx,j*Dy,Dx,Dy,null);
                         }
                         else if (TempMapObj[i][j] == Sim_Obj.ZOMBIE_BOOM)
                         {
+                            mDS.ZDead.reproducir();
                             Graph.drawImage(DataImg.ZBoom, i * Dx, j * Dy, Dx, Dy, null);
                         }
 
 
                         if (TempMapObj[i][j] < Sim_Obj.BOMBA)
+                        {
                             Graph.drawImage(DataImg.Bomba,i*Dx,j*Dy,Dx,Dy,null);
+                            //mDS.Bomba1.reproducir();
+                        }
+
 
                         if (TempMapObj[i][j] < Sim_Obj.EXPLOSION)
                             Graph.drawImage(DataImg.Explosion,i*Dx,j*Dy,Dx,Dy,null);
@@ -254,8 +264,9 @@ public class Ventana extends JFrame implements KeyListener, Controlador {
             }catch (Exception ignored){}
         }
 
-        RevisarBombas();
+
         Actualizar();
+        RevisarBombas();
     }
 
     private int[] Buscar(int t)
@@ -320,9 +331,15 @@ public class Ventana extends JFrame implements KeyListener, Controlador {
         for (int i = 0; i < mMapa.X; i++) {
             for (int j = 0; j < mMapa.Y; j++) {
                 int c = mMapa.Obj[i][j];
+
+                if (c == Sim_Obj.JUGADOR_BOOM || c == Sim_Obj.ZOMBIE_BOOM)
+                {
+                    mMapa.Obj[i][j] = Sim_Obj.EXPLOSION;
+                }
+
                 if(c < 0)
                 {
-                    if (c > Sim_Obj.DISIPA_EXPLOSION)   //Si c es una bomba
+                    if (c > Sim_Obj.DISIPA_EXPLOSION)   //Si C es una explosion
                         mMapa.Obj[i][j] = c - 1;
                     else
                     {
@@ -363,7 +380,18 @@ public class Ventana extends JFrame implements KeyListener, Controlador {
 
             if (!EQ && mMapa.Obj[x][y] < 0 && mMapa.Obj[x][y] > Sim_Obj.EXPLOSION)
                 ExplotarBomba(x,y);
-            mMapa.Obj[x][y] = Sim_Obj.EXPLOSION;
+            if (mMapa.Obj[x][y] >= Sim_Obj.JUGADOR_1 && mMapa.Obj[x][y] < Sim_Obj.ZOMBIE)
+            {//Si la explosion toca un jugador
+                mMapa.Obj[x][y] = Sim_Obj.JUGADOR_BOOM;
+            }else if (mMapa.Obj[x][y] >= Sim_Obj.ZOMBIE)
+            {//Si la explosion toca un jugador
+                mMapa.Obj[x][y] = Sim_Obj.ZOMBIE_BOOM;
+            }else
+            {
+                mMapa.Obj[x][y] = Sim_Obj.EXPLOSION;
+            }
+
+
         }
         else if (mMapa.Mov[x][y] == Sim_Mov.ARBOL)
         {
@@ -394,6 +422,7 @@ public class Ventana extends JFrame implements KeyListener, Controlador {
 
     @Override
     public void keyPressed(KeyEvent e) {
+        System.out.println("Se presiona " + e.getKeyCode());
         mListener.Moverse(e.getKeyCode());
     }
 

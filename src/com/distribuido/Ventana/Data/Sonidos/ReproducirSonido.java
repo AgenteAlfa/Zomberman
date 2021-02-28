@@ -5,7 +5,6 @@ import javax.sound.sampled.Clip;
 public class ReproducirSonido {
     private Clip clip;
 
-
     public ReproducirSonido(Clip c) {
 
         clip = c;
