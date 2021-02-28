@@ -8,7 +8,7 @@ import java.io.IOException;
 public class DataImg {
     public static BufferedImage Suelo,Vacio,Vacio1,Vacio2,Vacio3,Vacio4,Arbol,RocaD,RocaB;
 
-    public static BufferedImage J1,J2,J3,J4,J5,Bomba,Explosion,Nada,Zombie, Lava;
+    public static BufferedImage J1,J2,J3,J4,J5,Bomba,Explosion,Nada,Zombie, Lava , JBoom, ZBoom;
     public static void Inicializar()
     {
         try {
@@ -34,6 +34,10 @@ public class DataImg {
 
             Bomba = ImageIO.read(new File("src\\data\\graphics\\boom1.png"));
             Explosion = ImageIO.read(new File("src\\data\\graphics\\explot1.png"));
+
+            JBoom = ImageIO.read(new File("src\\data\\graphics\\JBoom.png"));
+            ZBoom = ImageIO.read(new File("src\\data\\graphics\\ZBoom.png"));
+
             Nada = null;
 
 

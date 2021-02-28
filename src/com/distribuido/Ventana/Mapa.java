@@ -108,7 +108,7 @@ public class Mapa implements Serializable {
             int tx = R.nextInt(X) , ty = R.nextInt(Y);
             if (Obj[tx][ty] == Sim_Obj.VACIO  && Mov[tx][ty] == Sim_Mov.PASABLE)
             {
-                Obj[tx][ty] = i + 1 + Sim_Obj.ZOMBIE;
+                Obj[tx][ty] = i + Sim_Obj.ZOMBIE;
             }
             else
             {

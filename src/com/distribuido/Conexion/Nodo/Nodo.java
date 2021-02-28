@@ -5,6 +5,7 @@ import com.distribuido.Conexion.Abstractos.Hilo;
 import com.distribuido.Conexion.Comunicaciones;
 import com.distribuido.Conexion.Configuracion;
 import com.distribuido.Ventana.Controlador;
+import com.distribuido.Ventana.Sim_Obj;
 
 import java.io.IOException;
 import java.net.Socket;
@@ -34,6 +35,13 @@ public class Nodo extends Conexion {
         System.out.println("Envie ip");
 
         mComunicacion = (Comunicaciones) getOISJuego().readObject();
+        Sim_Obj.ZOMBIE = mComunicacion.Jugadores + 1;
+        System.out.println(Sim_Obj.ZOMBIE);
+        Sim_Obj.JUGADOR_BOOM = mComunicacion.size() + 1;
+        System.out.println(Sim_Obj.JUGADOR_BOOM);
+        Sim_Obj.ZOMBIE_BOOM = mComunicacion.size() + 2;
+        System.out.println(Sim_Obj.ZOMBIE_BOOM);
+
         System.out.println("Recibi data");
         mComunicacion.Status();
 
@@ -51,23 +59,14 @@ public class Nodo extends Conexion {
     }
 
 
-    protected void EnviarOrden(char ord)
-    {
-        try {
-            getOOSConexion().writeObject(ord);
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
+    protected void EnviarOrden(char ord) throws IOException {
+        if(ord != 0)
+        System.out.println("Se envia : " + ord);
+        getOOSConexion().writeObject(ord);
     }
-    protected char[] EscucharStatus()
-    {
+    protected char[] EscucharStatus() throws IOException, ClassNotFoundException {
         char[] temp = new char[0];
-        try {
-            temp = (char[]) getOISJuego().readObject();
-
-        } catch (IOException | ClassNotFoundException e) {
-            e.printStackTrace();
-        }
+        temp = (char[]) getOISJuego().readObject();
         return temp;
     }
 
@@ -76,7 +75,13 @@ public class Nodo extends Conexion {
     {
         @Override
         protected void EjecucionBucle() {
-            mListener.EjecutarOrdenes(Nodo.this.EscucharStatus());
+            try {
+                mListener.EjecutarOrdenes(Nodo.this.EscucharStatus());
+            } catch (IOException | ClassNotFoundException e) {
+                //El servidor se cae
+                Apagar();
+                //TODO IMPLEMENTAR APRUEBA DE ERRORES
+            }
         }
     }
 
@@ -84,7 +89,14 @@ public class Nodo extends Conexion {
     {
         @Override
         protected void EjecucionBucle() {
-            Nodo.this.EnviarOrden(setData((char) 0));
+            try {
+                Nodo.this.EnviarOrden(setData((char) 0));
+            } catch (IOException e) {
+                //El servidor se cae
+                Apagar();
+                //TODO IMPLEMENTAR APRUEBA DE ERRORES
+
+            }
         }
     }
 

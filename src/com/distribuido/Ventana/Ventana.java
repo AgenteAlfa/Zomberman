@@ -65,21 +65,6 @@ public class Ventana extends JFrame implements KeyListener, Controlador {
         }
 
         Actualizar();
-        new Thread(new Runnable() {
-            @Override
-            public void run() {
-                while (true)
-                {
-
-                    Actualizar();
-                    try {
-                        Thread.sleep(200);
-                    } catch (InterruptedException e) {
-                        e.printStackTrace();
-                    }
-                }
-            }
-        }).start();
     }
 
 
@@ -129,8 +114,8 @@ public class Ventana extends JFrame implements KeyListener, Controlador {
         int [][] TempMapObj = new int[Constantes.VisionX][Constantes.VisionY];
 
 
-        for (int i = -3; i < 4; i++) {
-            for (int j = -3; j < 4; j++) {
+        for (int j = -3; j < 4; j++) {
+            for (int i = -3; i < 4; i++) {
                 try
                 {
                     TempMapObj[i + 3][j + 3] = mMapa.Obj[PosicionFoco[0] + i][PosicionFoco[1] + j];
@@ -173,32 +158,12 @@ public class Ventana extends JFrame implements KeyListener, Controlador {
                         break;
                 }
 
-
+                final int BoomJ = Sim_Obj.JUGADOR_BOOM;
 
                 switch (TempMapObj[i][j])
                 {
                     case Sim_Obj.VACIO:
                         //Graph.drawImage(DataImg.Suelo,i*Dx,j*Dy,Dx,Dy,null);
-                        break;
-                    case Sim_Obj.JUGADOR_1:
-                        //numJug++;
-                        Graph.drawImage(DataImg.J1,i*Dx,j*Dy,Dx,Dy,null);
-                        break;
-                    case Sim_Obj.JUGADOR_2:
-                        //numJug++;
-                        Graph.drawImage(DataImg.J2,i*Dx,j*Dy,Dx,Dy,null);
-                        break;
-                    case Sim_Obj.JUGADOR_3:
-                        //numJug++;
-                        Graph.drawImage(DataImg.J3,i*Dx,j*Dy,Dx,Dy,null);
-                        break;
-                    case Sim_Obj.JUGADOR_4:
-                        //numJug++;
-                        Graph.drawImage(DataImg.J4,i*Dx,j*Dy,Dx,Dy,null);
-                        break;
-                    case Sim_Obj.JUGADOR_5:
-                        //numJug++;
-                        Graph.drawImage(DataImg.J5,i*Dx,j*Dy,Dx,Dy,null);
                         break;
                     case Sim_Obj.EXPLOSION:
                         //mDS.Explosion.reproducir();
@@ -215,10 +180,51 @@ public class Ventana extends JFrame implements KeyListener, Controlador {
                         */
                         break;
                     default:
+                        // 1 -> N
+                        if (TempMapObj[i][j] >= Sim_Obj.JUGADOR_1 && TempMapObj[i][j] < Sim_Obj.ZOMBIE)
+                        {
+                            switch (TempMapObj[i][j])
+                            {
+
+                                case Sim_Obj.JUGADOR_1:
+                                    //numJug++;
+                                    Graph.drawImage(DataImg.J1,i*Dx,j*Dy,Dx,Dy,null);
+                                    break;
+                                case Sim_Obj.JUGADOR_2:
+                                    //numJug++;
+                                    Graph.drawImage(DataImg.J2,i*Dx,j*Dy,Dx,Dy,null);
+                                    break;
+                                case Sim_Obj.JUGADOR_3:
+                                    //numJug++;
+                                    Graph.drawImage(DataImg.J3,i*Dx,j*Dy,Dx,Dy,null);
+                                    break;
+                                case Sim_Obj.JUGADOR_4:
+                                    //numJug++;
+                                    Graph.drawImage(DataImg.J4,i*Dx,j*Dy,Dx,Dy,null);
+                                    break;
+                                case Sim_Obj.JUGADOR_5:
+                                    //numJug++;
+                                    Graph.drawImage(DataImg.J5,i*Dx,j*Dy,Dx,Dy,null);
+                                    break;
+                            }
+                        }
+                        else if (TempMapObj[i][j] >= Sim_Obj.ZOMBIE && TempMapObj[i][j] < Sim_Obj.JUGADOR_BOOM)
+                        {
+                            Graph.drawImage(DataImg.Zombie,i*Dx,j*Dy,Dx,Dy,null);
+                        }
+                        else if (TempMapObj[i][j] == Sim_Obj.JUGADOR_BOOM)
+                        {
+                            Graph.drawImage(DataImg.JBoom,i*Dx,j*Dy,Dx,Dy,null);
+                        }
+                        else if (TempMapObj[i][j] == Sim_Obj.ZOMBIE_BOOM)
+                        {
+                            Graph.drawImage(DataImg.ZBoom, i * Dx, j * Dy, Dx, Dy, null);
+                        }
+
+
                         if (TempMapObj[i][j] < Sim_Obj.BOMBA)
                             Graph.drawImage(DataImg.Bomba,i*Dx,j*Dy,Dx,Dy,null);
-                        if (TempMapObj[i][j] > Sim_Obj.JUGADOR_5)
-                            Graph.drawImage(DataImg.Zombie,i*Dx,j*Dy,Dx,Dy,null);
+
                         if (TempMapObj[i][j] < Sim_Obj.EXPLOSION)
                             Graph.drawImage(DataImg.Explosion,i*Dx,j*Dy,Dx,Dy,null);
                         break;
@@ -249,7 +255,7 @@ public class Ventana extends JFrame implements KeyListener, Controlador {
         }
 
         RevisarBombas();
-
+        Actualizar();
     }
 
     private int[] Buscar(int t)

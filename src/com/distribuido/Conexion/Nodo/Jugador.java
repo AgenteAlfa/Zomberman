@@ -1,7 +1,5 @@
 package com.distribuido.Conexion.Nodo;
 
-import com.distribuido.Conexion.Abstractos.Hilo;
-import com.distribuido.Ventana.Controlador;
 import com.distribuido.Ventana.Mapa;
 import com.distribuido.Ventana.Ventana;
 

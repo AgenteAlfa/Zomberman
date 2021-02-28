@@ -6,5 +6,8 @@ public class Constantes {
     //XV YV son del tamaño de la ventana
     public static final int VisionX = 7;
     public static final int VisionY = 7;
+
+    public static final int VisionZX = 5;
+    public static final int VisionZY = 5;
 }
 

@@ -8,11 +8,13 @@ public class Comunicaciones extends ArrayList<String> implements Serializable {
 
     public final int Posicion;
     public int Actual;
+    public int Jugadores;
 
-    public Comunicaciones(Collection<? extends String> c, int posicion, int actual) {
+    public Comunicaciones(Collection<? extends String> c, int posicion, int actual, int jugadores) {
         super(c);
         Posicion = posicion;
         Actual = actual;
+        Jugadores = jugadores;
     }
 
     public void Status()

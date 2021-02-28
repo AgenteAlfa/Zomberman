@@ -51,13 +51,14 @@ public abstract class Servidor {
         Data = new char[Nodos.size()];
         for (int i = 0; i < Nodos.size(); i++) {
             try {
-                Nodos.get(i).getOOSJuego().writeObject(new Comunicaciones(Participantes,i,-1));
+                Nodos.get(i).getOOSJuego().writeObject(new Comunicaciones(Participantes,i,-1,Jugadores));
                 System.out.println("Se envio comunicaciones");
             } catch (IOException e) {
                 e.printStackTrace();
             }
         }
         System.out.println("Termine de enviar comunicaciones");
+
     }
     protected void Iniciar()
     {
@@ -89,7 +90,7 @@ public abstract class Servidor {
                 .Inclur_Jugadores(Jugadores)
                 .Inclur_Zombies(Nodos.size() - Jugadores);
 
-        //mMapa.Imprimir();
+        mMapa.Imprimir();
 
         for (int i = 0; i < Nodos.size(); i++) {
             try {
