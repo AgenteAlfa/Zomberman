@@ -25,6 +25,7 @@ public class ControladorZombie implements Controlador{
         mMapa = mapa;
         Foco = enfoque;
         mListener = listener;
+        System.out.println("YO DEBO ENFOCAR " + Foco);
 
         //Buscar la posicion
         for (int i = 0; i < mMapa.X; i++) {
@@ -53,8 +54,8 @@ public class ControladorZombie implements Controlador{
 
         for (int i = 0; i < data.length; i++) {
             try {
-                if (data[i] != 0)
-                    System.out.println((i + 1) + "\t : \t" + data[i] );
+                //if (data[i] != 0)
+                //    System.out.println((i + 1) + "\t : \t" + data[i] );
                 Ejecutar(i + 1, data[i]);
             }catch (Exception ignored){}
         }

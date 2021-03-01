@@ -112,8 +112,8 @@ public abstract class Nodo extends Conexion {
     }
 
     protected void EnviarOrden(char ord) throws IOException {
-        if(ord != 0)
-        System.out.println("Se envia : " + ord);
+        //if(ord != 0)
+        //System.out.println("Se envia : " + ord);
         getOOSConexion().writeObject(ord);
     }
     protected char[] EscucharStatus() throws IOException, ClassNotFoundException {
