@@ -1,8 +1,10 @@
 package com.distribuido.Conexion;
 
 public class Configuracion {
-    public static final String MI_IP = "192.168.0.13";
-    public static String SERVER_IP = "192.168.0.13";
+    public static final String MI_IP = "25.23.27.238";
+
+    //public static String SERVER_IP = "25.24.159.161";
+    public static String SERVER_IP = "25.23.27.238";
 
 
     public static final int PUERTO_CONEXION = 1234;

@@ -8,6 +8,7 @@ public class TEST_Jugador2 {
     public static void main(String[] args) {
         try {
             Jugador N = new Jugador();
+            N.VerificarConexion();
         } catch (IOException | ClassNotFoundException e) {
             e.printStackTrace();
         }

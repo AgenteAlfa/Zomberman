@@ -269,6 +269,11 @@ public class Ventana extends JFrame implements KeyListener, Controlador {
         RevisarBombas();
     }
 
+    @Override
+    public void SetearMapa(Mapa M) {
+        mMapa = M;
+    }
+
     private int[] Buscar(int t)
     {
 

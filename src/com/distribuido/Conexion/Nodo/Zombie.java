@@ -23,6 +23,11 @@ public class Zombie extends Nodo implements ControladorZombie.Acciones{
     }
 
     @Override
+    protected Mapa GetMapa() {
+        return mControlador.getmMapa();
+    }
+
+    @Override
     public void BuscarCerebros(int direccion) {
         //Se envia la tecla al escenario
         System.out.println("Tecla " + direccion);

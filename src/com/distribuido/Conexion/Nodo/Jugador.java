@@ -19,6 +19,11 @@ public class Jugador extends Nodo implements Ventana.AccionesJugador {
     }
 
     @Override
+    protected Mapa GetMapa() {
+        return mVentana.getmMapa();
+    }
+
+    @Override
     public void Moverse(int tecla) {
         //Se envia la tecla al escenario
         //System.out.println("Tecla " + tecla);

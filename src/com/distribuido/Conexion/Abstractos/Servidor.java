@@ -31,9 +31,13 @@ public abstract class Servidor {
 
     protected void Esperar()
     {
+        Esperar(true);
+    }
+    protected void Esperar(boolean opt)
+    {
         Participantes = new ArrayList<>();
         Nodos = new ArrayList<>();
-        Esperador = new HEsperador();
+        Esperador = new HEsperador(opt);
         Esperador.start();
     }
     protected void EsperarZombies()
@@ -43,22 +47,30 @@ public abstract class Servidor {
         System.out.println("Hay " + Jugadores + " jugadores");
     }
 
-
-    protected void DejarEsperar()
+    protected void DejarEsperar(boolean opt)
     {
         Esperador.Apagar();
-        System.out.println("Hay " + (Nodos.size() - Jugadores) + " Zombies");
+
         Data = new char[Nodos.size()];
-        for (int i = 0; i < Nodos.size(); i++) {
-            try {
-                Nodos.get(i).getOOSJuego().writeObject(new Comunicaciones(Participantes,i,-1,Jugadores));
-                System.out.println("Se envio comunicaciones");
-            } catch (IOException e) {
-                e.printStackTrace();
+        if (opt)
+        {
+            System.out.println("Hay " + (Nodos.size() - Jugadores) + " Zombies");
+            for (int i = 0; i < Nodos.size(); i++) {
+                try {
+                    Nodos.get(i).getOOSJuego().writeObject(new Comunicaciones(Participantes,i,-1,Jugadores));
+                    System.out.println("Se envio comunicaciones");
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
             }
         }
+
         System.out.println("Termine de enviar comunicaciones");
 
+    }
+    protected void DejarEsperar()
+    {
+        DejarEsperar(true );
     }
     protected void Iniciar()
     {
@@ -84,6 +96,21 @@ public abstract class Servidor {
             e.printStackTrace();
         }
     }
+
+    public void EnviarMapa(Mapa mMapa)
+    {
+        System.out.println("Enviando mapa a " + Nodos.size() + " nodos ");
+        for (DNodo nodo : Nodos) {
+            try {
+                nodo.getOOSJuego().writeObject(mMapa);
+                System.out.println("Se envio mapa");
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        }
+        System.out.println("Termine de enviar el mapa");
+    }
+
     protected void CrearEnviarMapa()
     {
         Mapa mMapa = new Mapa(10,10)
@@ -92,15 +119,7 @@ public abstract class Servidor {
 
         mMapa.Imprimir();
 
-        for (int i = 0; i < Nodos.size(); i++) {
-            try {
-                Nodos.get(i).getOOSJuego().writeObject(mMapa);
-                System.out.println("Se envio mapa");
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
-        }
-        System.out.println("Termine de enviar el mapa");
+        EnviarMapa(mMapa);
     }
 
 
@@ -113,7 +132,8 @@ public abstract class Servidor {
                 try {
                     N.EnviarEstado(temp);
                 } catch (Exception E) {
-                    Nodos.set(i,null);
+                    //Nodos.set(i,null);
+
                     fuera++;
                 }
 
@@ -125,20 +145,40 @@ public abstract class Servidor {
 
     private class HEsperador extends Hilo
     {
+        public HEsperador(boolean empezar) {
+            super(empezar);
+        }
+
         @Override
         protected void EjecucionBucle() {
             try {
                 DNodo temp = new DNodo(SSConexion.accept() , SSJuego.accept());
-                System.out.println("A ingresado el jugador Nro " + Nodos.size() + "!");
-                Nodos.add(temp);
-                Participantes.add((String) temp.getOISConexion().readObject());
-                System.out.println("Se le comunico data al nodo ");
+
+                if (Empezar)
+                {
+                    System.out.println("A ingresado el jugador Nro " + Nodos.size() + "!");
+                    Nodos.add(temp);
+                    Participantes.add((String) temp.getOISConexion().readObject());
+                    System.out.println("Se le comunico data al nodo ");
+                }
+                else
+                {
+                    int t = (int) temp.getOISConexion().readObject();
+                    System.out.println("Se a reconectado un jugador! , Dice ser " + t);
+                    Nodos.add(t,temp);
+                }
+
+
             } catch (Exception ignored) {}
         }
     }
 
+
+
+
     private class HOidor extends Hilo
     {
+
         @Override
         protected void EjecucionBucle() {
             //Este hilo escucha las ordenes de cada nodo en cierto momento y las guarda para que
@@ -157,7 +197,7 @@ public abstract class Servidor {
                         }
                     }
                     catch (Exception E) {
-                        Nodos.set(i,null);
+                        //Nodos.set(i,null);
                         Fuera++;
                         if (Fuera == Nodos.size()){
                             Apagar();
@@ -173,7 +213,6 @@ public abstract class Servidor {
 
     private class HEjecutor extends Hilo
     {
-
         @Override
         protected void EjecucionBucle() {
             //Instante T en el que se cuenta un turno

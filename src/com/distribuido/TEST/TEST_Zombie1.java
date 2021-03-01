@@ -9,6 +9,7 @@ public class TEST_Zombie1 {
     public static void main(String[] args) {
         try {
             Zombie Z = new Zombie();
+            Z.VerificarConexion();
         } catch (IOException | ClassNotFoundException e) {
             e.printStackTrace();
         }

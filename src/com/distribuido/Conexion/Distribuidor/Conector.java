@@ -34,7 +34,6 @@ public class Conector extends Servidor {
         Iniciar();
 
 
-        //Ahora tiene que morir este conector
-        //Close();
+
     }
 }

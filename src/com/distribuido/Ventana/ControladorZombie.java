@@ -17,6 +17,10 @@ public class ControladorZombie implements Controlador{
     public static final int MARCA = -1;
     public static final int INPASABLE = -2;
 
+    public Mapa getmMapa() {
+        return mMapa;
+    }
+
     public ControladorZombie(Mapa mapa, int enfoque, Acciones listener) throws IOException, ClassNotFoundException {
         mMapa = mapa;
         Foco = enfoque;
@@ -56,6 +60,11 @@ public class ControladorZombie implements Controlador{
         if(new Random().nextInt(100) < 40)    DetectarCerebros();
         RevisarBombas();
         BuscarAlrededor();
+    }
+
+    @Override
+    public void SetearMapa(Mapa M) {
+        mMapa = M;
     }
 
     private void DetectarCerebros()
