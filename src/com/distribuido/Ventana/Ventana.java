@@ -254,6 +254,7 @@ public class Ventana extends JFrame implements KeyListener, Controlador {
 
     @Override
     public void EjecutarOrdenes(char[] data) {
+        if (data == null) return;
         //Se asume el 0 -> 1 , 1 -> 2 ....etc
         //System.out.println("Estoy ejecutando ordenes de tam " + data.length);
         for (int i = 0; i < data.length; i++) {

@@ -108,7 +108,9 @@ public abstract class Nodo extends Conexion {
     }
     protected char[] EscucharStatus() throws IOException, ClassNotFoundException {
         char[] temp;
+
         temp = (char[]) getOISJuego().readObject();
+
         return temp;
     }
 
@@ -156,7 +158,7 @@ public abstract class Nodo extends Conexion {
         } catch (IOException e) {
             e.printStackTrace();
         }
-
+/*
         System.out.println("Ahora leo el mapa");
         Mapa T = null;
         //Espera una cofirmacion
@@ -172,7 +174,12 @@ public abstract class Nodo extends Conexion {
         }
 
         mListener.SetearMapa(T);
-
+*/
+        try {
+            Thread.sleep(1000);
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
         Empezar();
     }
 
@@ -192,16 +199,7 @@ public abstract class Nodo extends Conexion {
                 }
             }
             catch (IOException | ClassNotFoundException e) {
-                e.printStackTrace();
-                try {
-                    System.out.println("Reseteando OISJuego");
-                    getJuego().getInputStream().reset();
-
-                    setOISJuego(new ObjectInputStream(getJuego().getInputStream()));
-                    getOISJuego().reset();
-                } catch (IOException ioException) {
-                    ioException.printStackTrace();
-                }
+                //e.printStackTrace();
             }
         }
     }

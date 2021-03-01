@@ -22,7 +22,7 @@ public class Reconector extends Servidor {
             e.printStackTrace();
         }
         DejarEsperar(false);
-        EnviarMapa(Canon);
+        //EnviarMapa(Canon);
         Iniciar();
     }
 

@@ -49,6 +49,8 @@ public class ControladorZombie implements Controlador{
     public void EjecutarOrdenes(char[] data) {
         //Se asume el 0 -> 1 , 1 -> 2 ....etc
         //System.out.println("Estoy ejecutando ordenes de tam " + data.length);
+        if (data == null) return;
+
         for (int i = 0; i < data.length; i++) {
             try {
                 if (data[i] != 0)
@@ -109,7 +111,7 @@ public class ControladorZombie implements Controlador{
                 if (esJugador(TempMapObj[deltaX + i][deltaY + j]))
                 {
                     //System.out.println("Veo a "  +  TempMapObj[deltaX + i][deltaY + j]);
-                    escribir = true;
+                    //escribir = true;
                     pesos[deltaX + i][deltaY + j] = Math.abs(i) + Math.abs(j);
                 }
                 else if (TempMapMov[deltaX + i][deltaY + j] != Sim_Mov.PASABLE)
