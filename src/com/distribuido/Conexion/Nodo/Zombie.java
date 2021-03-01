@@ -9,8 +9,8 @@ import java.io.IOException;
 public class Zombie extends Nodo implements ControladorZombie.Acciones{
     ControladorZombie mControlador;
 
-    public Zombie() throws IOException, ClassNotFoundException {
-        super();
+    public Zombie(int n) throws IOException, ClassNotFoundException {
+        super(n);
         System.out.println("EJECUTANDO CODIGO ZOMIBIE");
         System.out.println("Debo enfocar :  " + (mComunicacion.Posicion + 1));
 

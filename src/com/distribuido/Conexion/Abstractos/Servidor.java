@@ -7,12 +7,15 @@ import com.distribuido.Conexion.Nodo.Nodo;
 import com.distribuido.Ventana.Mapa;
 import com.distribuido.Ventana.Sim_Obj;
 
+import javax.xml.crypto.Data;
 import java.io.IOException;
 import java.net.ServerSocket;
 import java.util.ArrayList;
 
 public abstract class Servidor {
     private ArrayList<DNodo> Nodos;
+    private ArrayList<Integer> Ordenador;
+
     private int Jugadores;
     private char[] Data;
     private ArrayList<String> Participantes;
@@ -31,39 +34,50 @@ public abstract class Servidor {
 
     protected void Esperar()
     {
-        Esperar(true);
+        Esperar(-1);
     }
-    protected void Esperar(boolean opt)
+    protected void Esperar(int num)
     {
         Participantes = new ArrayList<>();
         Nodos = new ArrayList<>();
-        Esperador = new HEsperador(opt);
+        Ordenador =  new ArrayList<>();
+        Esperador = new HEsperador();
         Esperador.start();
     }
     protected void EsperarZombies()
     {
         Jugadores = Nodos.size();
-        Sim_Obj.ZOMBIE = Jugadores + 1;
+        if (Sim_Obj.ZOMBIE == 666)
+            Sim_Obj.ZOMBIE = Jugadores + 1;
         System.out.println("Hay " + Jugadores + " jugadores");
     }
 
     protected void DejarEsperar(boolean opt)
     {
         Esperador.Apagar();
+        System.out.println("ORDENES : ");
+        for (int t : Ordenador) {
+            System.out.print(t + "  ");
+        }
 
         Data = new char[Nodos.size()];
-        if (opt)
-        {
-            System.out.println("Hay " + (Nodos.size() - Jugadores) + " Zombies");
+        System.out.println("Hay " + (Nodos.size() - Jugadores) + " Zombies");
             for (int i = 0; i < Nodos.size(); i++) {
                 try {
-                    Nodos.get(i).getOOSJuego().writeObject(new Comunicaciones(Participantes,i,-1,Jugadores));
+                    DNodo D = Nodos.get(i); //Nodo en posicon i
+                    int t = Ordenador.get(i);   //Posicion que dice ser ese nodo
+                    D.getOOSJuego().writeObject(new Comunicaciones(
+                            Participantes,
+                            t,
+                            opt? -1 : 0,
+                            Jugadores));
+
                     System.out.println("Se envio comunicaciones");
                 } catch (IOException e) {
                     e.printStackTrace();
                 }
             }
-        }
+
 
         System.out.println("Termine de enviar comunicaciones");
 
@@ -79,6 +93,7 @@ public abstract class Servidor {
 
         Ejecutor = new HEjecutor();
         Ejecutor.start();
+
     }
 
 
@@ -123,11 +138,13 @@ public abstract class Servidor {
     }
 
 
-    protected int EnviarStatusTodos(char[] temp)
+    protected int EnviarStatusTodos(char[] temp )
     {
         int fuera = 0;
         for (int i = 0; i < Nodos.size(); i++) {
-            DNodo N = Nodos.get(i);
+            DNodo N = Nodos.get(
+                    Ordenador.get(i)
+            );
             if (N != null) {
                 try {
                     N.EnviarEstado(temp);
@@ -145,30 +162,22 @@ public abstract class Servidor {
 
     private class HEsperador extends Hilo
     {
-        public HEsperador(boolean empezar) {
-            super(empezar);
-        }
+
 
         @Override
         protected void EjecucionBucle() {
             try {
                 DNodo temp = new DNodo(SSConexion.accept() , SSJuego.accept());
-
-                if (Empezar)
-                {
-                    System.out.println("A ingresado el jugador Nro " + Nodos.size() + "!");
+                System.out.println("A ingresado el jugador Nro " + Nodos.size() + "!");
+                String IP = (String) temp.getOISConexion().readObject();
+                int n = (int) temp.getOISConexion().readObject();
+                System.out.println("Llega nodo " + Ordenador.size() +  " dice ser " + n);
+                //if (n != -1)
+                    //Nodos.add(n,temp);
+                //else
                     Nodos.add(temp);
-                    Participantes.add((String) temp.getOISConexion().readObject());
-                    System.out.println("Se le comunico data al nodo ");
-                }
-                else
-                {
-                    int t = (int) temp.getOISConexion().readObject();
-                    System.out.println("Se a reconectado un jugador! , Dice ser " + t);
-                    Nodos.add(t,temp);
-                }
-
-
+                    Ordenador.add(n == -1? Ordenador.size() : n);
+                Participantes.add(IP);
             } catch (Exception ignored) {}
         }
     }
@@ -185,7 +194,7 @@ public abstract class Servidor {
             //un hilo ejecutor pueda hacer las operaciones
             int Fuera = 0;
             for (int i = 0; i < Nodos.size(); i++) {
-                DNodo N = Nodos.get(i);
+                DNodo N = Nodos.get(Ordenador.get(i));
                 if (N != null)
                 {
                     try

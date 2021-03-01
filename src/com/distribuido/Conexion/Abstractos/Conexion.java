@@ -4,6 +4,7 @@ import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.net.Socket;
+import java.net.SocketAddress;
 
 public abstract class Conexion {
     protected ObjectInputStream getOISConexion() {
@@ -51,10 +52,31 @@ public abstract class Conexion {
         this.OOSJuego = OOSJuego;
     }
 
-    public Conexion(Socket conexion , Socket juego)
+    public Conexion(SocketAddress Aconexion, SocketAddress Ajuego)
+    {
+        Conexion = new Socket();
+        Juego = new Socket();
+
+        try {
+            Conexion.connect(Aconexion,3000);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        try {
+            Juego.connect(Ajuego,3000);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+
+        Conectar(Conexion,Juego);
+    }
+
+    public Conexion(Socket conexion, Socket juego)
     {
         Conexion = conexion;
         Juego = juego;
+
+
         Conectar(Conexion,Juego);
     }
     protected void Conectar(Socket Conexion , Socket Juego)

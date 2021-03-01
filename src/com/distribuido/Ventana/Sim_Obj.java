@@ -11,10 +11,10 @@ public class Sim_Obj {
     public static final int JUGADOR_3 = 3;
     public static final int JUGADOR_4 = 4;
     public static final int JUGADOR_5 = 5;
-    public static int ZOMBIE = 6; //Los nodos que controlen zombies manejaran el codigo 6 o mayor
+    public static int ZOMBIE = 666; //Los nodos que controlen zombies manejaran el codigo 6 o mayor
 
-    public static int JUGADOR_BOOM;
-    public static int ZOMBIE_BOOM;
+    public static int JUGADOR_BOOM = 667;
+    public static int ZOMBIE_BOOM = 667;
 
     public static final int BOMBA = -1;
 

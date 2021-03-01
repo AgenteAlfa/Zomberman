@@ -7,6 +7,7 @@ import javax.swing.*;
 import java.awt.*;
 import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
+import java.awt.event.WindowEvent;
 import java.awt.image.BufferStrategy;
 import java.util.Date;
 import java.util.Random;
@@ -109,6 +110,8 @@ public class Ventana extends JFrame implements KeyListener, Controlador {
 
     private void DibujarCuadricula()
     {
+
+        //System.out.println("SOY " +Foco);
         int Dx = (Constantes.ANCHO)/(Constantes.VisionX);
         int Dy = (Constantes.ALTO)/(Constantes.VisionY);
         BuscarAlrededor();
@@ -250,6 +253,11 @@ public class Ventana extends JFrame implements KeyListener, Controlador {
         Ini = System.nanoTime();
 
 
+    }
+    public void Cerrar()
+    {
+        setVisible(false); //you can't see me!
+        dispose(); //Destroy the JFrame object
     }
 
     @Override

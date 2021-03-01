@@ -5,13 +5,16 @@ import com.distribuido.Conexion.Abstractos.Hilo;
 import com.distribuido.Conexion.Comunicaciones;
 import com.distribuido.Conexion.Configuracion;
 import com.distribuido.Conexion.Distribuidor.Reconector;
+import com.distribuido.Conexion.Semilla;
 import com.distribuido.Ventana.Controlador;
 import com.distribuido.Ventana.Mapa;
 import com.distribuido.Ventana.Sim_Obj;
 
 import java.io.IOException;
 import java.io.ObjectInputStream;
+import java.net.InetSocketAddress;
 import java.net.Socket;
+import java.net.SocketAddress;
 import java.net.SocketException;
 import java.util.Map;
 
@@ -35,27 +38,29 @@ public abstract class Nodo extends Conexion {
 
 
 
-    public Nodo() throws IOException, ClassNotFoundException {
-        super(
-                new Socket(
-                        Configuracion.SERVER_IP,
-                        Configuracion.PUERTO_CONEXION),
-                new Socket(
-                        Configuracion.SERVER_IP,
-                        Configuracion.PUERTO_JUEGO));
-        Jugando = true;
 
+    public Nodo(int n) throws IOException, ClassNotFoundException {
+
+        super(
+                new InetSocketAddress(Configuracion.SERVER_IP,Configuracion.PUERTO_CONEXION),
+                new InetSocketAddress(Configuracion.SERVER_IP,Configuracion.PUERTO_JUEGO));
+
+        Jugando = true;
         System.out.println(".....Ejecutando codigo NODO");
         System.out.println("Cree mis socket");
         getOOSConexion().writeObject(Configuracion.MI_IP);
+        getOOSConexion().writeObject(n);
         System.out.println("Envie ip");
 
         mComunicacion = (Comunicaciones) getOISJuego().readObject();
-        Sim_Obj.ZOMBIE = mComunicacion.Jugadores + 1;
+        if (Sim_Obj.ZOMBIE == 666)
+            Sim_Obj.ZOMBIE = mComunicacion.Jugadores + 1;
         System.out.println(Sim_Obj.ZOMBIE);
-        Sim_Obj.JUGADOR_BOOM = mComunicacion.size() + 1;
+        if (Sim_Obj.JUGADOR_BOOM == 667)
+            Sim_Obj.JUGADOR_BOOM = mComunicacion.size() + 1;
         System.out.println(Sim_Obj.JUGADOR_BOOM);
-        Sim_Obj.ZOMBIE_BOOM = mComunicacion.size() + 2;
+        if (Sim_Obj.ZOMBIE_BOOM == 668)
+            Sim_Obj.ZOMBIE_BOOM = mComunicacion.size() + 2;
         System.out.println(Sim_Obj.ZOMBIE_BOOM);
 
         System.out.println("Recibi data");
@@ -77,15 +82,13 @@ public abstract class Nodo extends Conexion {
     }
     protected abstract Mapa GetMapa();
 
-    public void VerificarConexion()
+    public boolean VerificarConexion()
     {
         while (Jugando)
         {
             if ( !(Escritor.isAlive() || Lector.isAlive()) )
             {
-                //Si se a desconectado y sigue jugando
-                System.out.println("Me desconecte , debo seguir jugando");
-                Reconectar();
+                return true;
 
             }
             try
@@ -96,10 +99,17 @@ public abstract class Nodo extends Conexion {
             {
                 e.printStackTrace();
             }
+
         }
+        return false;
     }
 
 
+    public Semilla getSemilla()
+    {
+        return new Semilla( GetMapa(), mComunicacion);
+
+    }
 
     protected void EnviarOrden(char ord) throws IOException {
         if(ord != 0)
@@ -114,74 +124,6 @@ public abstract class Nodo extends Conexion {
         return temp;
     }
 
-
-    private void Reconectar() {
-
-        //Apagar los hilos que se conectan con el servidor
-
-
-        try { getOISJuego().close();        }catch (Exception ignored) {}
-        try { getOISConexion().close();     }catch (Exception ignored) {}
-        try { getOOSConexion().close();     }catch (Exception ignored) {}
-        try { getOOSJuego().close();        }catch (Exception ignored) {}
-
-
-        mComunicacion.Actual ++;
-        Configuracion.SERVER_IP = mComunicacion.get(mComunicacion.Actual);
-        if (mComunicacion.Actual == mComunicacion.Posicion)
-        {//Si me toca salvar la partida
-            new Thread(new Runnable() {
-                @Override
-                public void run() {
-                    try {
-                        new Reconector(GetMapa()).Reconectar();
-                    } catch (IOException e) {
-                        e.printStackTrace();
-                    }
-                }
-            }).start();
-        }
-        //Me conecto al nuevo servidor
-        try {
-            Conectar(
-                    new Socket(
-                            Configuracion.SERVER_IP,
-                            Configuracion.PUERTO_CONEXION),
-                    new Socket(
-                            Configuracion.SERVER_IP,
-                            Configuracion.PUERTO_JUEGO));
-            //Enviar que nodo soy
-            System.out.println("Digo que soy el nodo : " + mComunicacion.Posicion);
-            getOOSConexion().writeObject(mComunicacion.Posicion);
-
-
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-/*
-        System.out.println("Ahora leo el mapa");
-        Mapa T = null;
-        //Espera una cofirmacion
-
-        try
-        {
-            T = (Mapa) getOISJuego().readObject();
-            System.out.println("Lei el mapa que me enviaron");
-        } catch (Exception e)
-        {
-             //e.printStackTrace();
-             System.out.println("No se lee el mapa, usando anterior");
-        }
-
-        mListener.SetearMapa(T);
-*/
-        try {
-            Thread.sleep(1000);
-        } catch (InterruptedException e) {
-            e.printStackTrace();
-        }
-        Empezar();
-    }
 
 
     private class HLector extends Hilo
@@ -204,6 +146,7 @@ public abstract class Nodo extends Conexion {
         }
     }
 
+
     private class HEscritor extends Hilo
     {
         @Override
@@ -212,6 +155,7 @@ public abstract class Nodo extends Conexion {
                 Nodo.this.EnviarOrden(setData((char) 0));
             } catch (IOException e) {
                 e.printStackTrace();
+
                 Apagar();
             }
         }

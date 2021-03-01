@@ -8,14 +8,19 @@ import java.io.IOException;
 public class Jugador extends Nodo implements Ventana.AccionesJugador {
 
     private final Ventana mVentana;
-    public Jugador() throws IOException, ClassNotFoundException {
-        super();
+    public Jugador(int n) throws IOException, ClassNotFoundException {
+        super(n);
         //Preparar ventana
         System.out.println("Debo enfocar :  " + (mComunicacion.Posicion + 1));
+
         mVentana = new Ventana((Mapa) getOISJuego().readObject(),mComunicacion.Posicion + 1,this);
         mListener = mVentana;
         System.out.println("Se recibio mapa");
         Empezar();
+    }
+
+    public void Cerrar(){
+       mVentana.Cerrar();
     }
 
     @Override
